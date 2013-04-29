@@ -1,5 +1,6 @@
 *.directory
 /git-gui.sh
+/pull.sh
 *.svg
 *.dot
 /demo
