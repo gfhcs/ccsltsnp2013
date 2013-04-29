@@ -1,2 +1,7 @@
 *.directory
 /git-gui.sh
+*.svg
+*.dot
+/demo
+/draw.sh
+/doc
