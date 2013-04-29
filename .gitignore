@@ -6,3 +6,6 @@
 /demo
 /draw.sh
 /doc
+
+!ccs_wizard.sh
+!draw.sh
