@@ -1,6 +1,9 @@
 load "Char";
 load "Int";
 
+
+
+
 datatype token = NULL | PLUS | DOT | PAR | BACKSLASH | ID of string | LPAR | RPAR | LCPAR | RCPAR | COMMA | SEMICOLON | DEFINE
 
 fun kc (#"0")  = true
@@ -43,7 +46,7 @@ fun lex nil = nil
 
 
 
-signature ISET = sig
+structure Set :> sig
    
    type 'a set
    
@@ -64,8 +67,7 @@ signature ISET = sig
    val size : 'a set -> int
    val isEmpty : 'a set -> bool
  end
-  
- structure Set :> ISET = struct
+= struct
  
    type 'a set = ('a * 'a -> order) * 'a list
     
