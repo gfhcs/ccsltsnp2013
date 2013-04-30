@@ -80,3 +80,5 @@ end
  end
   
 open LTS
+
+val convert = draw o ccs
