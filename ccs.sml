@@ -1,4 +1,6 @@
+load "TextIO";
 
+val load' = load;
 
  	datatype token = NULL | PLUS | DOT | PAR | BACKSLASH | ID of string | LPAR | RPAR | LCPAR | RCPAR | COMMA | SEMICOLON | DEFINE
 	datatype exp = Stop | Id of string | Choice of exp * exp | Prefix of exp * exp |  Parallel of exp * exp | Restrict of exp * string Set.set
@@ -156,16 +158,20 @@
 	|   compare (_, Parallel _) = GREATER
 	|   compare (Restrict (e1, r1), Restrict (e2, r2)) = (case compare (e1, e2) of EQUAL => Set.compare (r1, r2) | s => s )
 
-	fun load f = let val file = (load "TextIO"; TextIO.openIn f)
+	val ccs = parse o lex
+		
+	fun load f = let val file =  TextIO.openIn f
 					val e = ccs (TextIO.inputAll file)
 				in	 
 					TextIO.closeIn file;
 					e
 				end
 
-	val ccs = parse o lex
+	
 
  
 end
  
  open CCS
+ 
+ val load = load'
