@@ -1,5 +1,3 @@
-load "Int";
-
 exception Error of string
 
 

@@ -1,3 +1,4 @@
+	load "Int";
 	load "TextIO";
 	load "OS";	
 
