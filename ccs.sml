@@ -73,15 +73,17 @@ val load' = load;
 
 	fun last s = String.sub (s, String.size s - 1)
 	
-	fun prefix s = String.substring (s, 0, String.size s  -1 )
+	fun pfx s = String.substring (s, 0, String.size s  -1 )
 
 	fun fork a = let val l = last a in
 					if l = #"?" orelse l = #"!" then [a] else [a, a ^"?", a^"!"] end
 					
 					
 	fun matches a a' = (case (last a, last a') of
-							(#"?", #"!") => prefix a = prefix a'
-							| (#"!", #"?") => prefix a = prefix a'
+							(#"?", #"!") => pfx a = pfx a'
+							| (#"!", #"?") => pfx a = pfx a'
+							| (#"!", #"!") => false
+							| (#"?", #"?") => false							
 							|    _                      => a = a')
 							
 	fun needsMatch a = let val l = last a in l = #"!" orelse l = #"?" end
@@ -124,9 +126,9 @@ val load' = load;
 	|   primitive ((ID s) :: tr) = (Id s, tr)
 	|   primitive (LPAR :: tr) = match (exp tr) RPAR
 	|   primitive _ = raise Parse "Expected '0', identifier or parenthesised expression!"
-
-
-	fun toString (Restrict (e, e')) = (parallelToStr e) ^ " \\ {" ^ (setToString e') ^"}"
+	
+	
+	fun toString (Restrict (e, e')) = (parallelToStr e) ^ " \\ " ^ (actionsToString e')
 	|   toString e = parallelToStr e
 	and parallelToStr (Parallel (e, e')) = (parallelToStr e) ^ " | " ^ (choiceToStr e')
 	|   parallelToStr e = choiceToStr e
@@ -137,8 +139,7 @@ val load' = load;
 	and primitiveToStr Stop = "0"
 	|   primitiveToStr (Id s) = s
 	|   primitiveToStr  e =  "(" ^ toString e ^ ")"
-	and setToString s = #1(Set.fold (fn (s, (a, prefix)) => (a^prefix^ s , ", ")) ("", "") (Set.map String.compare (fn s => String.substring (s,0, String.size s - 1)) s))
-
+	and actionsToString s = Set.toString (fn s => s) (Set.map String.compare (fn a => if needsMatch a then pfx a else a) s)
 
 						
 	fun compare (Stop, Stop) = EQUAL
