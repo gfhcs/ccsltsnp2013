@@ -18,6 +18,8 @@ structure Set :> sig
    val compare : ('a set * 'a set) -> order
    val size : 'a set -> int
    val isEmpty : 'a set -> bool
+   val toString : ('a -> string) -> 'a set -> string
+   
  end
 = struct
  
@@ -106,5 +108,7 @@ structure Set :> sig
    
    fun isEmpty (cmp, nil) = true
    |   isEmpty _ = false
+   
+   fun toString p s = "{" ^ #1(fold (fn (s, (a, prefix)) => (a^prefix^ (p s) , ", ")) ("", "") s) ^ "}"
    
  end 
