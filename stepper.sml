@@ -5,7 +5,7 @@ load "Int";
 structure Stepper :> sig
 
 	val reset : binding * exp -> unit
-	val current : unit -> exp
+	val current : unit -> binding * exp
 	val show  : unit -> unit (* shows the current expression*)
 	val post  : unit -> unit (* shows the currently possible transitions (action and successor) in a numbered list*)
 	val succ  : int -> unit (* Switches to the n-th successor in the post list*)
@@ -22,7 +22,7 @@ end = struct
 	
 	fun set x = (c := x; e := LTS.edges (!b) x)
 	
-	fun current () = !c
+	fun current () = (!b, !c)
 	
 	fun show () = (print "\nCurrent expression: \t"; print (toString (!c)); print "\n\n")
 	
