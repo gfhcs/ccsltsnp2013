@@ -126,7 +126,7 @@ val load' = load;
 	|   primitive _ = raise Parse "Expected '0', identifier or parenthesised expression!"
 
 
-	fun toString (Restrict (e, e')) = (parallelToStr e) ^ " \\\\ {" ^ (setToString e') ^"}"
+	fun toString (Restrict (e, e')) = (parallelToStr e) ^ " \\ {" ^ (setToString e') ^"}"
 	|   toString e = parallelToStr e
 	and parallelToStr (Parallel (e, e')) = (parallelToStr e) ^ " | " ^ (choiceToStr e')
 	|   parallelToStr e = choiceToStr e

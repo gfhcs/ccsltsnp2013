@@ -68,6 +68,8 @@ structure LTS :> sig
 			fn () => c := 1)
 			end
 			
+	val toString = (String.translate (fn #"\\" => "\\\\" | c => implode [c])) o toString
+			
 	fun draw' print (nodes : (exp -> string) ref) (gamma: string -> exp) (e:exp) = (!nodes e; ()) handle Empty => 
 
 								let fun id (e:exp) = !nodes e handle Empty => (let val i = Int.toString(count()) 
