@@ -71,26 +71,26 @@ val load' = load;
 
 	fun extend (a,ts) p f = let val (a',tr) = p ts in (f(a,a'),tr) end
 
+	fun last s = String.sub (s, String.size s - 1)
+	
+	fun prefix s = String.substring (s, 0, String.size s  -1 )
 
-
-
-
-
-
-	fun fork a = let val l = String.substring (a, String.size a -1, 1) in
-					if l = "?" orelse l = "!" then [a] else [a ^"?", a^"!"] end
+	fun fork a = let val l = last a in
+					if l = #"?" orelse l = #"!" then [a] else [a, a ^"?", a^"!"] end
 					
 					
-	fun matches a a' = (case (rev (explode a), rev (explode a')) of
-							((#"?")::cr, (#"!")::cr') => (cr = cr')
-							| ((#"!")::cr, (#"?")::cr') => (cr = cr') 
-							|    _                      => false  )
+	fun matches a a' = (case (last a, last a') of
+							(#"?", #"!") => prefix a = prefix a'
+							| (#"!", #"?") => prefix a = prefix a'
+							|    _                      => a = a')
+							
+	fun needsMatch a = let val l = last a in l = #"!" orelse l = #"?" end
 					
 	fun assertProper' R =  if Set.isEmpty R then ()
 						else let val a = Set.any R
 								val R' = Set.filter (fn a' => a <> a' andalso not(matches a a')) R
 							in
-									if Set.size(R') = Set.size (R) - 2 then assertProper' R'
+									if Set.size(R') = Set.size (R) - 2 orelse not (needsMatch a) then assertProper' R'
 									else raise Error ("Invalid restriction set: " ^ a ^ " violates the restriction set invariant!")
 								end		 
 	fun assertProper R = (assertProper' R; R)				 
