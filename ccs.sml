@@ -6,20 +6,27 @@ val load' = load;
 	datatype exp = Stop | Id of string | Choice of exp * exp | Prefix of exp * exp |  Parallel of exp * exp | Restrict of exp * string Set.set
 	exception Parse of string
 	
-	type binding = string -> exp
+	type action = string
+	
+	type binding = string * exp
+	
+	type bindings = binding Set.set
 	
  structure CCS :> sig
  
 	val lex : string -> token list
-	val parse : token list -> binding * exp
+	val parse : token list -> bindings * exp
 	
-	val ccs : string -> binding * exp
+	val ccs : string -> bindings * exp
 	
 	val toString: exp -> string
 	val compare : exp * exp -> order
-	val matches : string -> string -> bool
+	val matches : action -> action -> bool
 
-	val load : string -> binding * exp
+	val lookup : bindings -> string -> exp
+	val compareBinding : binding * binding -> order
+	
+	val load : string -> bindings * exp
 	
  end
  = struct
@@ -65,8 +72,7 @@ val load' = load;
 
 
 	val lex = lex'' o explode
-
-
+	
 	fun match (a,ts) t = if null ts orelse hd ts <> t then raise Error "match" else (a, tl ts)
 
 	fun extend (a,ts) p f = let val (a',tr) = p ts in (f(a,a'),tr) end
@@ -96,15 +102,17 @@ val load' = load;
 									else raise Error ("Invalid restriction set: " ^ a ^ " violates the restriction set invariant!")
 								end		 
 	fun assertProper R = (assertProper' R; R)				 
-					
+	
+	
+	fun compareBinding ((id1, e1),(id2, e2)) = String.compare (id1, id2)
+	
 	fun parse ts = (case exp ts of
-				(e, SEMICOLON::tr) => ((bindings (fn _=>raise Empty) tr), e)
-				|  (e, _) => (fn _ => raise Empty,e))
-
+				(e, SEMICOLON::tr) => (bindings (Set.empty compareBinding) tr, e)
+				|  (e, _) => ((Set.empty compareBinding),e))				
 	and bindings b nil = b
 	|   bindings b (SEMICOLON::tr) = bindings b tr
 	|   bindings b (COMMA::tr) = bindings b tr
-	|   bindings b ((ID id)::DEFINE::tr) = let val (e, tr) = (exp tr) in bindings (update String.compare b id e) tr end
+	|   bindings b ((ID id)::DEFINE::tr) = let val (e, tr) = (exp tr) in bindings (Set.plus b (id, e)) tr end
 	|   bindings b  _                    = raise Parse "Could not parse bindings!"
 	and exp ts = (case parallel ts of 
 				(l, BACKSLASH::tr) => extend (l, tr) set Restrict
@@ -168,8 +176,9 @@ val load' = load;
 					e
 				end
 
+	exception Found of exp
 	
-
+	fun lookup b x = #2(Set.any (Set.filter (fn (x', e) => x = x') b))
  
 end
  

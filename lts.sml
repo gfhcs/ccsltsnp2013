@@ -9,7 +9,7 @@
 structure LTS :> sig
 	
 	val compareEdge : edge * edge -> order
-	val edges : binding -> exp -> edge Set.set 
+	val edges : bindings -> exp -> edge Set.set 
 	
 	val setFormat : outputFormat -> unit
 	val getFormat : unit -> outputFormat
@@ -20,7 +20,7 @@ structure LTS :> sig
 	val setDotCommand : string -> unit
 	val getDotCommand : unit -> string
 	
-	val draw : binding * exp -> unit
+	val draw : bindings * exp -> unit
 		
 	
  end
@@ -28,20 +28,18 @@ structure LTS :> sig
  
 	fun compareEdge ((l1, a1, r1), (l2, a2, r2)) = case cmpTuple compare ((l1,r1),(l2,r2)) of EQUAL => String.compare(a1, a2) | s => s              
 
-	
-
 
 	fun own e es = Set.map compareEdge (fn (l, a, r) => (e, a, r)) es
 
-	fun edges gamma N Stop = Set.set compareEdge nil
-	|   edges gamma N (Id s) = ((if Set.element s N then Set.set compareEdge nil
-								else own (Id s) (edges gamma (Set.plus N s)(gamma s))) handle Empty => Set.empty compareEdge)
-	|   edges gamma N (Choice (l, r)) = let val (el, er) = (edges gamma N l, edges gamma N r) in
+	fun edges b N Stop = Set.set compareEdge nil
+	|   edges b N (Id s) = ((if Set.element s N then Set.set compareEdge nil
+								else own (Id s) (edges b (Set.plus N s)(lookup b s))) handle Empty => Set.empty compareEdge)
+	|   edges b N (Choice (l, r)) = let val (el, er) = (edges b N l, edges b N r) in
 									Set.union (own (Choice(l,r)) el) (own (Choice(l,r)) er) end
-	|   edges gamma N (Prefix (Id a, p)) = Set.set compareEdge [(Prefix (Id a, p), a, p)]
-	|   edges gamma N (Parallel (l, r)) =  let 
+	|   edges b N (Prefix (Id a, p)) = Set.set compareEdge [(Prefix (Id a, p), a, p)]
+	|   edges b N (Parallel (l, r)) =  let 
 											val e = Parallel (l, r)
-											val (el, er) = (edges gamma N l, edges gamma N r) 
+											val (el, er) = (edges b N l, edges b N r) 
 											val parLeft  = Set.map compareEdge (fn (l', a, r') => (e, a, Parallel (r',r)))
 											val parRight  = Set.map compareEdge (fn (l', a, r') => (e, a, Parallel (l,r')))
 											
@@ -56,11 +54,11 @@ structure LTS :> sig
 										in Set.fold (fn (e,s) => Set.union (Set.map compareEdge (applySync e) (findSync e er)) s) union el end
 										
 										
-	|   edges gamma N (Restrict (e, R)) = Set.map compareEdge (fn (l, a, r) => (Restrict(e, R), a, Restrict(r, R))) (Set.filter (fn (e, a, e') => not (Set.element a R)) (edges gamma N e))
+	|   edges b N (Restrict (e, R)) = Set.map compareEdge (fn (l, a, r) => (Restrict(e, R), a, Restrict(r, R))) (Set.filter (fn (e, a, e') => not (Set.element a R)) (edges b N e))
 	|   edges _ _ _ = raise Error "Invalid expression!"
 
 	val edges' = edges
-	fun edges gamma e = edges' gamma (Set.empty String.compare) e
+	fun edges b e = edges' b (Set.empty String.compare) e
 	
 	val (count, reset) = let val c = ref 1
 			in
@@ -70,14 +68,14 @@ structure LTS :> sig
 			
 	val toString = (String.translate (fn #"\\" => "\\\\" | c => implode [c])) o toString
 			
-	fun draw' print (nodes : (exp -> string) ref) (gamma: string -> exp) (e:exp) = (!nodes e; ()) handle Empty => 
+	fun draw' print nodes b e = (!nodes e; ()) handle Empty => 
 
 								let fun id (e:exp) = !nodes e handle Empty => (let val i = Int.toString(count()) 
 															val _ = print (i ^ " [shape = box, label = \""^ toString e ^"\", style = rounded];\n") 
 														in nodes := update compare (!nodes) e i; i end)
 									val _ = id e
 								in
-									Set.fold (fn ((l, a, r), ()) => (draw' print nodes gamma r;print (id l ^ " -> " ^ id r ^"[label = \"" ^ a ^"\"]\n"))) () (edges gamma e)
+									Set.fold (fn ((l, a, r), ()) => (draw' print nodes b r;print (id l ^ " -> " ^ id r ^"[label = \"" ^ a ^"\"]\n"))) () (edges b e)
 								end
 								
 

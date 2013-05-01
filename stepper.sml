@@ -1,19 +1,18 @@
 load "Int";
 
-
-
 structure Stepper :> sig
 
-	val reset : binding * exp -> unit
-	val current : unit -> binding * exp
+	val reset : bindings * exp -> unit
+	val current : unit -> bindings * exp
 	val show  : unit -> unit (* shows the current expression*)
+	val bindings : unit -> unit
 	val post  : unit -> unit (* shows the currently possible transitions (action and successor) in a numbered list*)
 	val succ  : int -> unit (* Switches to the n-th successor in the post list*)
 	val back  : unit -> unit (* Goes back to the last expression before the current one*)
 	
 end = struct
 
-	val b = ref (fn _ => raise Empty) (*Bindings*)
+	val b = ref (Set.empty compareBinding) (*Bindings*)
 	val c = ref Stop (* Current expression. *)
 	val e = ref (Set.empty compareEdge)
 	
@@ -22,9 +21,39 @@ end = struct
 	
 	fun set x = (c := x; e := LTS.edges (!b) x)
 	
+	(* Try to make this label' a more concise implementation of the labels function below! *)
+	
+	fun get s x = (x, lookup s x)
+	
+	fun contains s b = Set.exists (fn (x, e) => x = b) s
+	
+	fun bindings' s (Restrict (e, _)) = bindings' s e
+	|   bindings' s (Parallel (e, e')) = Set.union (bindings' s e) (bindings' s e')
+	|   bindings' s (Choice (e, e')) = Set.union (bindings' s e) (bindings' s e')
+	|   bindings' s (Prefix (_, e)) =  bindings' s e
+	|   bindings' s Stop = s
+	|   bindings' s (Id id) = if contains s id then s else bindings' (Set.plus s (get (!b) id)) (lookup (!b) id)
+			
+	fun collectBindings () = bindings' (Set.empty compareBinding) (!c)
+			
+	fun printBindings b = (print "\n";Set.fold (fn ((x, e), _) => print ("                    \t" ^ x ^ " := " ^ (toString e) ^ "\n"))  () b; print "\n")
+	
+	fun bindings() = printBindings (collectBindings())
+	
 	fun current () = (!b, !c)
 	
-	fun show () = (print "\nCurrent expression: \t"; print (toString (!c)); print "\n\n")
+	fun show () = (print "\nCurrent expression: \t"; 
+				   print (toString (!c));
+				   
+				   let val b = collectBindings() in
+				   
+				   if Set.size b > 0 then 
+				   (
+						print "\n\nwhere";
+						printBindings b						
+				   )
+				   else print "\n\n"
+				   end)
 	
 	val d = ref 1
 	val l = ref 1
