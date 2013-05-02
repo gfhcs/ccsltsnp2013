@@ -1,18 +1,19 @@
 
+
 (*  Enter dot path here: *)
 
 val dot = "dot";
 
+val dot = "\"" ^ dot ^ "\"";
 
 
+load "Int";
+load "TextIO";
+load "OS";	
 
-	load "Int";
-	load "TextIO";
-	load "OS";	
+type edge = exp * string * exp
 
-	type edge = exp * string * exp
-	
-	datatype outputFormat = SVG | PNG | PDF
+datatype outputFormat = SVG | PNG | PDF
 	
 structure LTS :> sig
 	
