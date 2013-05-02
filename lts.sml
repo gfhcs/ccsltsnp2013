@@ -88,7 +88,7 @@ structure LTS :> sig
 								end
 								
 
-	val (n, f, c) = (ref "lts", ref SVG, ref dot)
+	val (n, f, c) = (ref "graph", ref SVG, ref dot)
 
 	fun setFormat format = f := format
 	fun getFormat () = !f
