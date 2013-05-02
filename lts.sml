@@ -1,3 +1,11 @@
+
+(*  Enter dot path here: *)
+
+val dot = "dot";
+
+
+
+
 	load "Int";
 	load "TextIO";
 	load "OS";	
@@ -79,7 +87,7 @@ structure LTS :> sig
 								end
 								
 
-	val (n, f, c) = (ref "lts", ref SVG, ref "dot")
+	val (n, f, c) = (ref "lts", ref SVG, ref dot)
 
 	fun setFormat format = f := format
 	fun getFormat () = !f
@@ -91,8 +99,8 @@ structure LTS :> sig
 	fun getDotCommand () = !c		
 		
 	fun ext SVG = "svg"
-	|   ext PDF = "PDF"
-	|   ext PNG = "PNG"
+	|   ext PDF = "pdf"
+	|   ext PNG = "png"
 		
 
 	fun draw (b, e) = 
