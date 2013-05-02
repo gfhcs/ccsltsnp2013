@@ -1,3 +1,5 @@
 rm ccs_lts.zip
 
-zip -o ccs_lts.zip -xi ccs.sml ccs_wizard.sh ccs_wizard.cmd general.sml lts.sml set.sml stepper.sml samples/protocol.ccs samples/camera.ccs
+cd ../
+
+zip -o ccs_wizard/ccs_lts.zip -xi ccs_wizard/ccs.sml ccs_wizard/ccs_wizard.sh ccs_wizard/ccs_wizard.cmd ccs_wizard/general.sml ccs_wizard/lts.sml ccs_wizard/set.sml ccs_wizard/stepper.sml ccs_wizard/samples/protocol.ccs ccs_wizard/samples/camera.ccs
