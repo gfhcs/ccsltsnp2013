@@ -1,1 +1,0 @@
-fun convert _ = print "\n\n*** You downloaded this program from a source that is not maintained any longer!\n    Go to\n\n       https://github.com/gfhcs/ccsltsnp2013/raw/master/ccs_lts.zip\n\n    to download the latest version! Have a look at the NP forum for instructions on how to use the new version! \n\n";
