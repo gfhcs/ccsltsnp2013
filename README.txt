@@ -1,9 +1,7 @@
 This is an interpreter for the "Calculus of Communicating Systems" (CCS).
 It has been designed for compatibility with the Concurrent Programming Cource 2013 at Saarland University.
 
-This document is not complete yet...
-
-TODO...
+	TODO: What is needed to run this, how to run this.
 
 
 CCS: The following procedures are to be used for conversions from string to expression and vice versa. They also handle bindings:
@@ -91,12 +89,32 @@ Stepper: The following procedures give access to an interactive "stepper", that 
 		
 	reset : bindings * exp -> unit
 	
-	TODO...
+		Initializes the stepper with a set of bindings and a CCS expression.
+		The return values of parse and CCS.load make good argument values for this procedure!
 	
 	current : unit -> bindings * exp
-	show  : unit -> unit (* shows the current expression*)
+
+		Returns the set of bindings and the CCS expression the stepper is currently focused to.
+	
+	show  : unit -> unit
+
+		Pretty-prints the currently focused expression, including all the relevant identifier bindings (if there are any).
+
 	bindings : unit -> unit
-	post  : unit -> unit (* shows the currently possible transitions (action and successor) in a numbered list*)
-	succ  : int -> unit (* Switches to the n-th successor in the post list*)
-	back  : unit -> unit (* Goes back to the last expression before the current one*)
+
+		Pretty-prints the set of all the bindings the stepper knows of.
+
+	post  : unit -> unit
+
+		Pretty-prints all the transitions possible from the currently focused expression.
+
+	succ  : int -> unit
+
+		Follows the n-th transition of the currently focused expression, which focuses the target of this transition.
+		Transition numbers are listed by 'post'
+
+	back  : unit -> unit
+
+		Sets the stepper focus to the expression that has been focused last before the currently focused one.
+		Multiple calls to this procedure may eventually bring the stepper back to the very first expression it focused after the last call to 'reset'.
 		
