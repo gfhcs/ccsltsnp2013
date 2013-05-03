@@ -15,7 +15,9 @@ end = struct
 	val b = ref (Set.empty compareBinding) (*Bindings*)
 	val c = ref Stop (* Current expression. *)
 	val e = ref (Set.empty compareEdge)
-	
+
+	val allBindings = ref (fn () => Set.empty compareBinding)
+
 	val path = ref nil (* First item is the expression that has last been visited before the current expression.*)
 
 	
@@ -37,9 +39,9 @@ end = struct
 	fun collectBindings () = bindings' (Set.empty compareBinding) (!c)
 			
 	fun printBindings b = (print "\n";Set.fold (fn ((x, e), _) => print ("                    \t" ^ x ^ " := " ^ (toString e) ^ "\n"))  () b; print "\n")
-	
-	fun bindings() = printBindings (collectBindings())
-	
+
+	fun bindings() = printBindings((!allBindings)())
+
 	fun current () = (!b, !c)
 	
 	fun show () = (print "\nCurrent expression: \t"; 
@@ -68,7 +70,11 @@ end = struct
 					d := digits (Set.size (!e));
 					l := Set.fold (fn ((_, a, _),l)
 									=> let val l' = String.size a in if l' > l then l' else l end)
-						1 (!e))
+						1 (!e);
+					allBindings := (fn () => bindings' (Set.empty compareBinding) (!c))
+					)
+
+	
 	
 	fun spaces n = iter n "" (fn s => s ^ " ")
 	
