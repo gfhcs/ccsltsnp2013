@@ -70,11 +70,8 @@ end = struct
 					d := digits (Set.size (!e));
 					l := Set.fold (fn ((_, a, _),l)
 									=> let val l' = String.size a in if l' > l then l' else l end)
-						1 (!e);
-					allBindings := (fn () => bindings' (Set.empty compareBinding) (!c))
-					)
-
-	
+						1 (!e)
+					)	
 	
 	fun spaces n = iter n "" (fn s => s ^ " ")
 	
@@ -105,7 +102,10 @@ end = struct
 				  nil => ()
 				| (x::xs) => (set x; path := xs))
 	
-	fun reset (b', c') = (b := b'; set c'; path := nil)
+	fun reset (b', c') = (b := b'; 
+						  set c';
+						  allBindings := (fn () => bindings' (Set.empty compareBinding) (!c));
+						  path := nil)
 	
 end
 
