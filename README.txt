@@ -2,6 +2,11 @@ This is an interpreter for the "Calculus of Communicating Systems" (CCS).
 It has been designed for compatibility with the Concurrent Programming Cource 2013 at Saarland University.
 
 	TODO: What is needed to run this, how to run this.
+	
+	
+	quit()
+	
+		Exits the program and closes Moscow ML.
 
 
 CCS: The following procedures are to be used for conversions from string to expression and vice versa. They also handle bindings:
