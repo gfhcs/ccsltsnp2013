@@ -29,6 +29,9 @@ structure LTS :> sig
 	val setDotCommand : string -> unit
 	val getDotCommand : unit -> string
 	
+	val setOverwrite : bool -> unit
+	val getOverwrite : unit -> bool
+	
 	val draw : bindings * exp -> unit
 		
 	
@@ -88,27 +91,40 @@ structure LTS :> sig
 								end
 								
 
-	val (n, f, c) = (ref "graph", ref SVG, ref dot)
+	val (name, overwrite, index, format, cmd) = (ref "graphs/graph", ref false, ref 0, ref SVG, ref dot)
 
-	fun setFormat format = f := format
-	fun getFormat () = !f
+	fun setFormat f = format := f
+	fun getFormat () = !format
 		
-	fun setFileName name = n := name
-	fun getFileName () = !n				
+	fun setFileName n = name := n
+	fun getFileName () = !name			
 		
-	fun setDotCommand command = c := command
-	fun getDotCommand () = !c		
+	fun setDotCommand c = cmd := c
+	fun getDotCommand () = !cmd		
 		
 	fun ext SVG = "svg"
 	|   ext PDF = "pdf"
 	|   ext PNG = "png"
 		
+		
+	fun setOverwrite b = overwrite := b
+	fun getOverwrite () = !overwrite
+		
 
+	fun getFileNumber i = (let val name = getFileName() ^  Int.toString(i)
+							in if not(!overwrite) andalso (OS.FileSys.fileSize (name ^ ".dot") > 0
+							 orelse OS.FileSys.fileSize (name ^ ".svg") > 0)
+						  then getFileNumber (i+1)
+						  else (index := i; i) end)
+						  handle SysErr _ => (index := i; i)
+						  
+	fun getFileNameIndexed() = getFileName() ^ Int.toString(getFileNumber(!index))
+		
 	fun draw (b, e) = 
 	let 
 		val _ = reset()
 		val ext = ext (getFormat ())
-		val name = getFileName ()
+		val name = getFileNameIndexed ()
 		
 		val out = TextIO.openOut (name ^ ".dot");
 		fun print s = TextIO.output (out, s)

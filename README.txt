@@ -91,17 +91,18 @@ It has been designed for compatibility with the Concurrent Programming Cource 20
 		setFormat : outputFormat -> unit
 		getFormat : unit -> outputFormat
 		
-			Gets or sets the file format for LTS graphs. Available are SVG, PNG and PDF. Standard is SVG.
+			Gets/sets the file format for LTS graphs. Available are SVG, PNG and PDF. Standard is SVG.
 		
 		setFileName : string -> unit
 		getFileName : unit -> string
 		
-			Gets or sets the output file name for LTS graphs. Standard is "graph".
+			Gets/sets the output file name for LTS graphs. Standard is "graphs/graph".
+			Keep in mind that the file name is also suffixed with an index (to avoid overriding other files) and a file extension (*.dot and the extension corresponding to the selected output format).
 		
 		setDotCommand : string -> unit
 		getDotCommand : unit -> string
 		
-			Gets or sets the command for calling the Graphviz tool "dot".
+			Gets/sets the command for calling the Graphviz tool "dot".
 			In general you should not use setDotCommand. Instead you should try to change the command right at the start of the file "lts.sml", where it says
 			
 				(*  Enter dot path here: *)
@@ -109,12 +110,22 @@ It has been designed for compatibility with the Concurrent Programming Cource 20
 				val dot = "dot";
 				
 			Paste your custom command instead of dot within the quotes.
+			
+		setOverwrite : bool -> unit
+		getOverwrite : unit -> bool
+		
+			Gets/sets the flag for overwriting: If set to true, existent graph files may be overwritten by new graph files.
+			Otherwise file names are appended an incremental numeric suffix to avoid overwriting.
+			Default is false.
 		
 		draw : bindings * exp -> unit
 		
 			Takes a set of bindings and an expression, converts the resulting LTS to dot code and calls the "dot" tool on this code.
 			The return values of parse and CCS.load make good argument values for this procedure!
 			To get to know how the output files are namend and in what format the graph will be written, use getFileName and getDotCommand.
+			
+			By default, the graph is written to graphs/graph0.dot and then converted to an SVG file graphs/graph0.svg.
+			This procedure avoids overwriting existing files by indexing them with a suffix, if this is requested. See 'setOverwrite'.
 			
 	Stepper: The following procedures give access to an interactive "stepper", that allows you to walk through an LTS:
 			
