@@ -58,8 +58,10 @@ structure LTS :> sig
 											fun sync (l, a, r) (l', a', r') = matches a a'																	   
 											
 											fun findSync e s = Set.filter (fn x =>  sync e x) s						  
-																		
-											fun applySync (l, a, r) (l', a', r')= (e, ".", Parallel (r, r'))
+																
+											fun pfx s = String.substring (s, 0, String.size s  -1 )
+																
+											fun applySync (l, a, r) (l', a', r')= (e, "["^ pfx a ^"]", Parallel (r, r'))
 																		
 											val union = Set.union (parLeft el) (parRight er)							 
 											

@@ -45,13 +45,14 @@ It has been designed for compatibility with the Concurrent Programming Cource 20
 			To specify bindings, terminate your expressin with a semicolon (;) and then write down all your bindings. Commata (,) or semicola between bindings are optional and plain white space as binding separator will work as well.
 			There will be no complaints if you don't define all the identifiers you are using, so be careful!
 			
-			The expression syntax is exactly the one defined the NP lectures:
+			The expression syntax is exactly the one defined in the NP lectures:
 			
-				P ::=  0  |  X  |  a.P  |  P + P  |  P '|' P  | P \ H
+				P  ::=  0  |  X  |  a.P  |  P + P  |  P '|' P  | P \ H
 			
 			where a is an arbitrary action name (optionally having the active (!) or the passive (?) suffix) and H is a set of restricted action names.
-			H is given in curly braces ({, }). If it contains an action name a without passive/active suffix, this is tread as meaning a, a! and a?.
+			H is given in curly braces ({, }). If it contains an action name a without passive/active suffix, this is tread as meaning a, a! and a?. If it contains a !-suffixed action name, it must also contain the corresponding ?-suffixed name.
 			The given alternatives for P are given in the order of strength with which they attract their constituents, so A + B | C is to be read as (A + B) | C.
+			Internal actions (that cannot sync nor be restricted) must be enclosed in square brackets ([, ]). Including internal actions in H will cause an error.
 		
 		ccs : string -> bindings * exp
 		

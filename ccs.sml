@@ -22,7 +22,8 @@ val load' = load;
 	val toString: exp -> string
 	val compare : exp * exp -> order
 	val matches : action -> action -> bool
-
+	val internal : action -> bool
+	
 	val lookup : bindings -> string -> exp
 	val compareBinding : binding * binding -> order
 	
@@ -81,8 +82,11 @@ val load' = load;
 	
 	fun pfx s = String.substring (s, 0, String.size s  -1 )
 
+	fun internal a = last a = #"]" andalso String.isPrefix "[" a	
+
+	
 	fun fork a = let val l = last a in
-					if l = #"?" orelse l = #"!" then [a] else [a, a ^"?", a^"!"] end
+					if l = #"?" orelse l = #"!" then [a] else if internal a then raise Error "A restriction set must not contain internal actions!" else [a, a ^"?", a^"!"] end
 					
 					
 	fun matches a a' = (case (last a, last a') of
@@ -91,7 +95,7 @@ val load' = load;
 							| (#"!", #"!") => false
 							| (#"?", #"?") => false							
 							|    _                      => a = a')
-							
+								
 	fun needsMatch a = let val l = last a in l = #"!" orelse l = #"?" end
 					
 	fun assertProper' R =  if Set.isEmpty R then ()
