@@ -92,9 +92,7 @@ val load' = load;
 	fun matches a a' = (case (last a, last a') of
 							(#"?", #"!") => pfx a = pfx a'
 							| (#"!", #"?") => pfx a = pfx a'
-							| (#"!", #"!") => false
-							| (#"?", #"?") => false							
-							|    _                      => a = a')
+							| _ => false)
 								
 	fun needsMatch a = let val l = last a in l = #"!" orelse l = #"?" end
 					
