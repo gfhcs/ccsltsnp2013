@@ -68,6 +68,10 @@ It has been designed for compatibility with the Concurrent Programming Cource 20
 		
 			Decides if two action names match each other (for synchronisation).
 
+		internal : action -> bool
+
+			Decides if the given action is internal (which depends only on the action name being eclosed in square brackets).
+
 		lookup : bindings -> string -> exp
 		
 			Takes a set of bindings and an identifier and looks up the definition for the identifier in the set.		
