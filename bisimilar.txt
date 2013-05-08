@@ -3,14 +3,17 @@ bisimulation' B s t :=
 0. if (s, t) in B then return B
 1. B += {(s, t)}
 2. for all edges s -a-> s'
-	  if there is no edge t -a-> t' , return {}
       for all edges t -a-> t'.
 		B' := bisimulation' B s' t'
-	  if B' = {}
-	    then return {}
-	    Else B += B'
+	  if B' <> {}
+	    B += B'
+		break
 3. for all edges t -a-> t'
-	  if there is no edge s -a-> s' , return {}
+      for all edges s -a-> s'.
+		B' := bisimulation' B s' t'
+	  if B' <> {}
+	    B += B'
+		break
 3. return B
 
 I suppose including the following would give me weak bisimilarity:
