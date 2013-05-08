@@ -5,17 +5,22 @@ bisimulation' B s t :=
 2. for all edges s -a-> s'
       for all edges t -a-> t'.
 		B' := bisimulation' B s' t'
-	  if B' <> {}
-	    B += B'
-		break
+		if B' <> {}
+			B += B'
+			break
 3. for all edges t -a-> t'
       for all edges s -a-> s'.
 		B' := bisimulation' B s' t'
-	  if B' <> {}
-	    B += B'
-		break
+		if B' <> {}
+			B += B'
+			break
 3. return B
 
 I suppose including the following would give me weak bisimilarity:
 
 P ~ Q =>  (P -[]-> P' => P' ~ Q) and Q -[]-> Q' => P ~ Q'
+
+
+I should also include:
+
+	B is a bijective bisimulation of P and Q <=> S isomorphous to Q
