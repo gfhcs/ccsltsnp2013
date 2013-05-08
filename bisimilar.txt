@@ -3,22 +3,28 @@ bisimulation' B s t :=
 0. if (s, t) in B then return B
 1. B += {(s, t)}
 2. for all edges s -a-> s'
-      for all edges t -a-> t'.
-		B' := bisimulation' B s' t'
-		if B' <> {}
-			B += B'
-			break
+	  if internal a then
+		B' := bisimulation' B s' t
+		if B <> {} then B += B'
+		else return {}
+	  else
+		for all edges t -a-> t'.
+			B' := bisimulation' B s' t'
+			if B' <> {}
+				B += B'
+				break
 3. for all edges t -a-> t'
-      for all edges s -a-> s'.
-		B' := bisimulation' B s' t'
-		if B' <> {}
-			B += B'
-			break
+	  if internal a then
+		B' := bisimulation' B s t'
+		if B <> {} then B += B'
+		else return {}
+	  else
+		for all edges s -a-> s'.
+			B' := bisimulation' B s' t'
+			if B' <> {}
+				B += B'
+				break
 3. return B
-
-I suppose including the following would give me weak bisimilarity:
-
-P ~ Q =>  (P -[]-> P' => P' ~ Q) and Q -[]-> Q' => P ~ Q'
 
 
 I should also include:
