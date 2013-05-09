@@ -1,6 +1,10 @@
 This is an interpreter for the "Calculus of Communicating Systems" (CCS).
 It has been designed for compatibility with the Concurrent Programming Cource 2013 at Saarland University.
 
+
+A demo video can be found at    http://www.youtube.com/watch?v=-cGXmsET4Q4   .
+
+
 1.  *** What you need ***
 	
 	You need to have installed Moscow ML (http://www.itu.dk/people/sestoft/mosml.html) and Graphviz (http://www.graphviz.org/).
