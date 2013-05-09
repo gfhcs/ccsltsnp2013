@@ -110,7 +110,8 @@ val load' = load;
 	
 	fun parse ts = (case exp ts of
 				(e, SEMICOLON::tr) => (bindings (Set.empty compareBinding) tr, e)
-				|  (e, _) => ((Set.empty compareBinding),e))				
+				|  (e, nil) => ((Set.empty compareBinding),e)
+				|  (e, _)  => raise Parse "Could not parse input completely! Are you missing a semicolon?")
 	and bindings b nil = b
 	|   bindings b (SEMICOLON::tr) = bindings b tr
 	|   bindings b (COMMA::tr) = bindings b tr
