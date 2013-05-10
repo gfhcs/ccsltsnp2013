@@ -45,7 +45,7 @@ structure LTS :> sig
 
 	fun edges b N Stop = Set.set compareEdge nil
 	|   edges b N (Id s) = ((if Set.element s N then Set.set compareEdge nil
-								else own (Id s) (edges b (Set.plus N s)(lookup b s))) handle Empty => Set.empty compareEdge)
+								else own (Id s) (edges b (Set.plus N s)(lookup b s))) handle Match => Set.empty compareEdge)
 	|   edges b N (Choice (l, r)) = let val (el, er) = (edges b N l, edges b N r) in
 									Set.union (own (Choice(l,r)) el) (own (Choice(l,r)) er) end
 	|   edges b N (Prefix (Id a, p)) = Set.set compareEdge [(Prefix (Id a, p), a, p)]
